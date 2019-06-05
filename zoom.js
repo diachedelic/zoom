@@ -374,6 +374,20 @@ Zoom.prototype.finalize = function() {
 };
 
 Zoom.prototype.repaint = function() {
+    // clamp zoom
+    const { A, b } = this.resultantZoom
+
+    const minZoom = 1
+
+    if (A[0][0] < minZoom) {
+        b[0] = 0
+        b[1] = 0
+    }
+
+    A[0][0] = Math.max(minZoom, A[0][0])
+    A[1][1] = Math.max(minZoom, A[1][1])
+
+    console.log(A[0], A[1], b[0], b[1])
     this.elem.style.transform = this.resultantZoom.css();
 };
 
