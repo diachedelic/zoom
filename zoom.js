@@ -270,6 +270,7 @@ function Zoom(elem, config, wnd) {
     var me = this;
 
     this.config = default_config(config, {
+        "zoomInOnly": false,
         "pan" : false,
         "rotate" : true
     });
@@ -374,20 +375,22 @@ Zoom.prototype.finalize = function() {
 };
 
 Zoom.prototype.repaint = function() {
-    // clamp zoom
-    const { A, b } = this.resultantZoom
+    if (this.config.zoomInOnly) {
+        var A = this.resultantZoom.A;
+        var b = this.resultantZoom.b;
+        var minZoom = 1;
 
-    const minZoom = 1
+        // reset position
+        if (A[0][0] < minZoom) {
+            b[0] = 0
+            b[1] = 0
+        }
 
-    if (A[0][0] < minZoom) {
-        b[0] = 0
-        b[1] = 0
+        // clamp zoom
+        A[0][0] = Math.max(minZoom, A[0][0])
+        A[1][1] = Math.max(minZoom, A[1][1])
     }
 
-    A[0][0] = Math.max(minZoom, A[0][0])
-    A[1][1] = Math.max(minZoom, A[1][1])
-
-    console.log(A[0], A[1], b[0], b[1])
     this.elem.style.transform = this.resultantZoom.css();
 };
 

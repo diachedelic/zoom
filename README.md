@@ -30,6 +30,10 @@ The overflow:hidden is to crop the image moving outside the original border. Be 
 var elem = document.getElementById('torotate');
 var zm = new Zoom(elem, {
     rotate: true
+
+    // set to true to prevent `elem` shrinking below its initial size
+    // (note: buggy if rotation is enabled)
+    zoomInOnly: false
 });
 
 ```
