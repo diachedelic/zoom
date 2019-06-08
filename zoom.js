@@ -363,14 +363,14 @@ function Zoom(elem, config, wnd) {
 
     this.elemParent.addEventListener('touchstart', this._handleTouchStart);
     this.elemParent.addEventListener('touchstart', this._handleZoom);
-    this.elemParent.addEventListener('touchmove', this._handleZoom);
+    this.elemParent.addEventListener('touchmove', this._handleZoom, { passive: true });
     this.elemParent.addEventListener('touchend', this._handleZoom);
 }
 
 Zoom.prototype.destroy = function() {
     this.elemParent.removeEventListener('touchstart', this._handleTouchStart);
     this.elemParent.removeEventListener('touchstart', this._handleZoom);
-    this.elemParent.removeEventListener('touchmove', this._handleZoom);
+    this.elemParent.removeEventListener('touchmove', this._handleZoom, { passive: true });
     this.elemParent.removeEventListener('touchend', this._handleZoom);
 
     this.elem.style['will-change'] = null;
