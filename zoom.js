@@ -47,6 +47,16 @@ var dot = function(a, b) {
 };
 
 /**
+ * Get scalar length of 2D vector.
+ *
+ * @param {Array<number>} x 2D vector.
+ * @return {number}
+ */
+var len = function(x) {
+    return Math.sqrt(dot(x, x));
+}
+
+/**
  * Exterior Product of two vectors is a pseudoscalar.
  *
  * @param {Array<number>} a 2D vector.
@@ -148,9 +158,7 @@ var rotscale = function(a, b) {
 };
 
 var justscale = function(a, b) {
-    var alen = Math.sqrt(dot(a, a));
-    var blen = Math.sqrt(dot(b, b));
-    var scale = blen / alen;
+    var scale = len(b) / len(a);
     return rotate(scale, 0);
 };
 
@@ -174,10 +182,17 @@ var zoom = function(s, d, rotate) {
     // Rotation needed for source to dest vector.
     var rs = rotate ? rotscale(a, b) : justscale(a, b);
 
-    // Position of s[0] if rotation is applied.
-    var rs0 = apply(rs, s[0]);
-    // Since d[0] = rs0 + t
-    var t = minus(d[0], rs0);
+    // Anchor at touches which are more stationary
+    var aDelta = minus(d[0], s[0]);
+    var bDelta = minus(d[1], s[1]);
+    var prop = len(aDelta) / (len(aDelta) + len(bDelta));
+
+    var sAvg = avgVector(s[0], s[1], prop);
+    var dAvg = avgVector(d[0], d[1], prop);
+
+    var rsAvg = apply(rs, sAvg);
+    // Since d = rs + t
+    var t = minus(dAvg, rsAvg);
 
     return new Transform(rs, t);
 };
